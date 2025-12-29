@@ -16,10 +16,15 @@
 
     <script>
       var serverIP = window.location.hostname;
-      var apiPassword = "";
+      var apiPassword = localStorage.getItem("apiPassword") || "";
       var ultimateInfo = {};
 
       $(document).ready(async function () {
+        $("#savepassword").prop(
+          "checked",
+          localStorage.getItem("savePassword") === "true",
+        );
+
         async function ensureLoggedIn() {
           // This also works with older firmware that do not support password protection (will get a 404 for /v1/info)
           let [status_code, content] = await make_get_request(
@@ -50,9 +55,15 @@
             $("#welcome").show();
           }
         }
-
         $("#loginbutton").click(async function (event) {
           apiPassword = $("#password").val();
+          if ($("#savepassword").is(":checked")) {
+            localStorage.setItem("apiPassword", apiPassword);
+            localStorage.setItem("savePassword", "true");
+          } else {
+            localStorage.setItem("apiPassword", apiPassword);
+            localStorage.setItem("savePassword", "false");
+          }
           await ensureLoggedIn();
         });
 
@@ -64,6 +75,7 @@
 
         $("#logout").click(async function (event) {
           apiPassword = "";
+          localStorage.setItem("apiPassword", apiPassword);
           await ensureLoggedIn();
         });
 
@@ -1427,6 +1439,10 @@
 
       <div id="login" class="page">
         <h2>Password required</h2>
+        <label
+          ><input type="checkbox" id="savepassword" /> Stay logged in?</label
+        >
+        <br />
         <input id="password" type="password" />
         <button id="loginbutton" type="button">Login</button>
       </div>
@@ -1506,7 +1522,6 @@
         </p>
         <p><b>Special characters:</b></p>
         <div id="tableContainer"></div>
-
         <textarea id="basiceditor" class="c64-textarea" cols="80">
 10 print "hello world"
 20 goto 10
