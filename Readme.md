@@ -32,5 +32,3 @@ We needed an Extra file for the font, there ws nothing we could do about that.
 Also splitting the code into multiple files makes it easier to maintain and faster to load.
 
 The overall Filesize is still smaller than the original file.
-
-
