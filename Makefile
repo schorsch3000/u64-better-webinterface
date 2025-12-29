@@ -1,9 +1,13 @@
-.PHONY: build deploy-dev clean pretty pre-commit
+.PHONY: build deploy-dev clean pretty pre-commit release local-build
 
 
-build: pretty dist dist/C64_Pro-STYLE.woff
+local-build: pretty build
+
+
+build: dist dist/C64_Pro-STYLE.woff
 	minify -r  src/ -o dist
 
+release: build
 
 dist/C64_Pro-STYLE.woff: assets/C64_Pro-STYLE.woff
 	cp assets/C64_Pro-STYLE.woff dist/
