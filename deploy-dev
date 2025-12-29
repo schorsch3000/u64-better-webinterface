@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-u64 -u src/index.html /Flash/html/i2.html
