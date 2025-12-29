@@ -1,6 +1,38 @@
 var serverIP = window.location.hostname;
 var apiPassword = localStorage.getItem("apiPassword") || "";
 var ultimateInfo = {};
+var toastTimeout = null;
+function toast(msg, duration = 3000) {
+  if (toastTimeout) {
+    clearTimeout(toastTimeout);
+    $("#toast").removeClass("show");
+  }
+  $("#toast").text(msg);
+  $("#toast").addClass("show");
+  toastTimeout = setTimeout(function () {
+    $("#toast").removeClass("show");
+  }, duration);
+}
+
+function insertAtCursor(myField, myValue) {
+  //IE support
+  if (document.selection) {
+    myField.focus();
+    const sel = document.selection.createRange();
+    sel.text = myValue;
+  }
+  //MOZILLA and others
+  else if (myField.selectionStart || myField.selectionStart == "0") {
+    var startPos = myField.selectionStart;
+    var endPos = myField.selectionEnd;
+    myField.value =
+      myField.value.substring(0, startPos) +
+      myValue +
+      myField.value.substring(endPos, myField.value.length);
+  } else {
+    myField.value += myValue;
+  }
+}
 
 $(document).ready(async function () {
   $("#savepassword").prop(
@@ -12,13 +44,28 @@ $(document).ready(async function () {
     window.location.hash = $(this).attr("id");
   });
 
+  $("#basiceditor").val(
+    localStorage.getItem("basiceditor") || $("#basiceditor").val(),
+  );
+  $("#basiceditor").on("input", function () {
+    localStorage.setItem("basiceditor", $("#basiceditor").val());
+  });
+
+  $("#clearBASIC").click(function () {
+    if (confirm("Are you sure you want to clear the BASIC editor?")) {
+      localStorage.removeItem("basiceditor");
+      window.location.reload();
+    }
+  });
+
   async function ensureLoggedIn() {
     // This also works with older firmware that do not support password protection (will get a 404 for /v1/info)
     let [status_code, content] = await make_get_request(
       "http://" + serverIP + "/v1/info",
     );
     if (status_code == 401 || status_code == 403) {
-      $("#banner").html("&nbsp;");
+      $("#banner .title").html("&nbsp;");
+      $("head>title").html("Login Required");
       $("#left-nav").css("visibility", "hidden");
       $("#password").val("");
       $(".page").hide();
@@ -36,7 +83,7 @@ $(document).ready(async function () {
       } else {
         $("#logoutmenuitem").hide();
       }
-      $("#banner").html(product + " HTTP Server");
+      $("#banner .title, head>title").html(product + " HTTP Server");
       $("#left-nav").css("visibility", "visible");
       $(".page").hide();
       $("#welcome").show();
@@ -244,7 +291,27 @@ $(document).ready(async function () {
     parseBASIC();
   });
 
-  async function parseBASIC() {
+  $(document).keydown(function (e) {
+    if (e.altKey && e.key === "u") {
+      e.preventDefault();
+      $("#submitBASIC").click();
+    }
+  });
+
+  $("#submitBASICrun").click(function (event) {
+    event.preventDefault(); // Prevents the default action of the anchor tag
+    parseBASIC(true);
+  });
+
+  $(document).keydown(function (e) {
+    if (e.altKey && e.key === "r") {
+      e.preventDefault();
+      $("#submitBASICrun").click();
+    }
+  });
+
+  async function parseBASIC(start) {
+    start = start || false;
     var textarea = $("#basiceditor").val();
 
     // Split into lines, remove blank lines, convert to lowercase, and join back
@@ -277,7 +344,6 @@ $(document).ready(async function () {
       tokenized_lines[i - 1].addr + tokenized_lines[i - 1].bytes.length + 5;
 
     var data = convertData(tokenized_lines);
-
     if (basic_error !== "") {
       $("#basicmsg").text(basic_error);
       $("#basicmsg").show();
@@ -299,6 +365,22 @@ $(document).ready(async function () {
         "http://" + serverIP + "/v1/machine:writemem",
         params,
       );
+
+      if (start) {
+        params = { address: "0277", data: "0d52554e3a0d" };
+        [status_code, content] = await make_put_request(
+          "http://" + serverIP + "/v1/machine:writemem",
+          params,
+        );
+        params = { address: "00c6", data: "06" };
+        [status_code, content] = await make_put_request(
+          "http://" + serverIP + "/v1/machine:writemem",
+          params,
+        );
+        toast("BASIC program uploaded and started.");
+      } else {
+        toast("BASIC program uploaded.");
+      }
     }
 
     basic_error = "";
@@ -576,7 +658,9 @@ $(document).ready(async function () {
         let cellIndex = row * 10 + col;
         if (cellIndex < SPECIAL.length) {
           let [symbol, code] = SPECIAL[cellIndex];
-          $row.append(`<td>${symbol}</td>`);
+          $row.append(
+            `<td><button class="insertSymbol">${symbol}</button></td>`,
+          );
         } else {
           $row.append("<td></td>"); // Empty cell if no more data
         }
@@ -588,6 +672,11 @@ $(document).ready(async function () {
   }
 
   $("#tableContainer").append(createTable());
+
+  $(".insertSymbol").click(function () {
+    var symbol = $(this).text();
+    insertAtCursor(document.getElementById("basiceditor"), symbol);
+  });
 
   $(".body").terminal(
     {

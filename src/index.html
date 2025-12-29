@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Ultimate 64 Web Web Interface</title>
+    <title>Login Required</title>
     <script defer src="https://cdn.jsdelivr.net/npm/jquery"></script>
     <script
       defer
@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="banner">&nbsp;</div>
+    <div id="banner"><span class="title"></span><span id="toast"></span></div>
 
     <div id="content">
       <div id="left-nav">
@@ -147,9 +147,24 @@
         <textarea id="basiceditor" class="c64-textarea" cols="80">
 10 print "hello world"
 20 goto 10
-            </textarea
+</textarea
         >
-        <p><input type="button" id="submitBASIC" value="Upload" /></p>
+        <p>
+          <label>
+            <input type="checkbox" id="resetbeforebasic" /> Reset machine before
+            uploading?
+          </label>
+        </p>
+        <p>
+          <input type="button" id="clearBASIC" value="Clear" />
+          <input type="button" id="submitBASIC" value="Upload" title="Alt+U" />
+          <input
+            type="button"
+            id="submitBASICrun"
+            value="Upload & Run"
+            title="Alt+R"
+          />
+        </p>
 
         <div id="basicmsg">An error has occurred. Check for valid codes.</div>
       </div>
