@@ -11,6 +11,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: install dependencies
+        run: sudo apt-get install minify
+
       - name: Build
         run: make release
 
