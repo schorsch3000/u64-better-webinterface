@@ -8,6 +8,7 @@ build: dist dist/C64_Pro-STYLE.woff
 	minify -r  src/ -o dist
 
 release: build
+	cd dist && zip -r ../u64-better-webinterface.zip .
 
 dist/C64_Pro-STYLE.woff: assets/C64_Pro-STYLE.woff
 	cp assets/C64_Pro-STYLE.woff dist/
