@@ -1,4 +1,4 @@
-name: make release
+name: make pre-release
 on:
   push:
     branches:
