@@ -1,6 +1,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Ultimate 64 Web Web Interface</title>
     <script defer src="https://cdn.jsdelivr.net/npm/jquery"></script>
     <script
       defer
@@ -26,6 +27,9 @@
         display: flex;
         flex-direction: column;
         height: 100vh;
+      }
+      a:visited {
+        color: blue;
       }
       #banner {
         background: linear-gradient(
@@ -109,7 +113,7 @@
       }
 
       .c64-textarea {
-        font-family: C64;
+        font-family: C64, monospace;
         background-color: #1966be; /* Commodore 64 screen color */
         color: #68bee6; /* Light blue text color */
         border: none;
@@ -195,7 +199,7 @@
 
     <div id="content">
       <div id="left-nav">
-        <ul>
+        <ul data-section="pages">
           <li><a id="showwelcome" href="#">Home</a></li>
           <li><a id="showsidplay" href="#">SidPlayer</a></li>
           <li><a id="showrunner" href="#">Execute PRG / CRT</a></li>

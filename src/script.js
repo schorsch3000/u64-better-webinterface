@@ -8,6 +8,10 @@ $(document).ready(async function () {
     localStorage.getItem("savePassword") === "true",
   );
 
+  $("ul[data-section=pages] li a").click(function (event) {
+    window.location.hash = $(this).attr("id");
+  });
+
   async function ensureLoggedIn() {
     // This also works with older firmware that do not support password protection (will get a 404 for /v1/info)
     let [status_code, content] = await make_get_request(
@@ -704,6 +708,10 @@ $(document).ready(async function () {
 
   // Kick off login/welcome screen as needed
   await ensureLoggedIn();
+  if (window.location.hash) {
+    let page = window.location.hash.substring(1);
+    $("#" + page).trigger("click");
+  }
 });
 
 function isHexadecimal(str) {
