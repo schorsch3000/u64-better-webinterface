@@ -31,3 +31,6 @@ dist: clean
 	mkdir dist
 clean:
 	@rm -rf dist
+
+autodeploy-dev: build
+	find -not -path "./dist/*" -not -path "./assets/*" | entr -c make deploy-dev
