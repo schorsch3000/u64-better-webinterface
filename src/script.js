@@ -83,10 +83,19 @@ $(document).ready(async function () {
       } else {
         $("#logoutmenuitem").hide();
       }
+      $("body").addClass(product.replace(/\s+/g, "-").toLowerCase());
       $("#banner .title, head>title").html(product + " HTTP Server");
       $("#left-nav").css("visibility", "visible");
       $(".page").hide();
       $("#welcome").show();
+
+      if (product.includes("C64 Ulti")) {
+        $(".commodore_only").show();
+        $(".ultimate_only").hide();
+      } else {
+        $(".commodore_only").hide();
+        $(".ultimate_only").show();
+      }
     }
   }
   $("#loginbutton").click(async function (event) {
