@@ -9,6 +9,9 @@ body {
 a:visited {
   color: blue;
 }
+#offline {
+  display: none;
+}
 #banner {
   background: linear-gradient(
     to bottom,

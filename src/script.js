@@ -14,6 +14,26 @@ function toast(msg, duration = 3000) {
   }, duration);
 }
 
+let wait = 0;
+
+async function onlineCheck() {
+  wait++;
+  if (wait < 10) {
+    $("#content").show();
+    $("#offline").hide();
+  } else if (wait >= 10) {
+    $("#content").hide();
+    $("#offline").show();
+  }
+  let [status_code, content] = await make_get_request(
+    "http://" + serverIP + "/v1/info",
+  );
+  if (status_code) {
+    wait = 0;
+  }
+}
+setInterval(onlineCheck, 1000);
+
 function insertAtCursor(myField, myValue) {
   //IE support
   if (document.selection) {
