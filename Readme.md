@@ -28,7 +28,7 @@ This is not a rewrite, this is just a set of improvements to the existing web in
 
 ## why are there now multiple files instead of just one like before?
 
-We needed an Extra file for the font, there ws nothing we could do about that.
+We needed an Extra file for the font, there was nothing we could do about that.
 Also splitting the code into multiple files makes it easier to maintain and faster to load.
 
 The overall Filesize is still smaller than the original file.
