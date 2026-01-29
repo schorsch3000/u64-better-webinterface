@@ -6,6 +6,7 @@ local-build: pretty build
 
 build: dist dist/C64_Pro-STYLE.woff
 	minify -r  src/ -o dist
+	./checkSizeClaim.sh
 
 release: build
 	cd dist && zip -r ../u64-better-webinterface.zip .
