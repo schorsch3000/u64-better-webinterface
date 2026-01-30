@@ -31,6 +31,7 @@
           <li><a id="showrunner" href="#">Execute PRG / CRT</a></li>
           <li><a id="showterminal" href="#">Live Monitor</a></li>
           <li><a id="showtokenizer" href="#">BASIC Editor</a></li>
+          <li><a id="showinfo" href="#">Device Info</a></li>
         </ul>
         <ul>
           <li><a id="dopause" href="#">Pause Machine</a></li>
@@ -175,13 +176,25 @@
 
         <div id="basicmsg">An error has occurred. Check for valid codes.</div>
       </div>
-    </div>
-    <div id="offline">
-      <h1>Device Offline</h1>
-      <p>
-        The Ultimate device is currently offline. Please ensure that it is
-        powered on and connected to the network.
-      </p>
+
+      <div id="info" class="page">
+        <h1>Device Information</h1>
+        <h2>Hardware Info</h2>
+        <div id="infoTableContainer">
+          <p>Loading device information...</p>
+        </div>
+        <h2>Configuration</h2>
+        <div id="settings">
+          <p>Loading settings...</p>
+        </div>
+      </div>
+      <div id="offline" class="page">
+        <h1>Device Offline</h1>
+        <p>
+          The Ultimate device is currently offline. Please ensure that it is
+          powered on and connected to the network.
+        </p>
+      </div>
     </div>
   </body>
 </html>

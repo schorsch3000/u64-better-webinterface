@@ -94,7 +94,17 @@ $(document).ready(async function () {
     } else {
       if (content) {
         ultimateInfo = content;
+        let infoTable = $("<table></table>");
+        for (const [key, value] of Object.entries(ultimateInfo)) {
+          if (key === "errors") continue;
+          let row = $("<tr></tr>");
+          row.append($("<td></td>").text(key.replace(/_/g, " ")));
+          row.append($("<td></td>").text(value));
+          infoTable.append(row);
+        }
+        $("#infoTableContainer").empty().append(infoTable);
       }
+
       let product = ultimateInfo.product
         ? ultimateInfo.product
         : "Ultimate II/64";
@@ -260,6 +270,108 @@ $(document).ready(async function () {
     $(".page").hide();
     $("#tokenizer").show();
   });
+
+  $("#showinfo").click(function (event) {
+    populateSettings();
+    event.preventDefault(); // Prevents the default action of the anchor tag
+    $(".page").hide();
+    $("#info").show();
+  });
+  async function populateGroupSettings(group) {
+    let [status, settings] = await make_get_request("/v1/configs/" + group);
+
+    if (status !== 200) {
+      window.setTimeout(() => populateGroupSettings(group), 1000);
+    }
+    let settingsHeader = $("tr[data-group='" + group + "']");
+    for (const key of Object.keys(settings[group])) {
+      const value = settings[group][key];
+      let settingRow = $("<tr></tr>")
+        .attr("data-key", key)
+        .addClass("tooltip")
+        .addClass("needsData")
+        .attr("data-group", group);
+      let keyCol = $("<td></td>").text(key);
+      let valueCol = $("<td></td>").text(value);
+
+      settingRow.hover(async function () {
+        const $this = $(this);
+        if (!$this.hasClass("needsData")) {
+          return;
+        }
+
+        let [status, settingDetails] = await make_get_request(
+          "/v1/configs/" + group + "/" + key,
+        );
+
+        let sd = settingDetails[group][key];
+        let tooltipText = "";
+        if (typeof sd !== "object") {
+          $(this).removeClass("needsData");
+          $(this).removeClass("tooltip");
+        }
+        if (sd.default !== undefined) {
+          tooltipText += "Default: " + sd.default;
+        }
+
+        delete sd.default;
+
+        if (sd.min !== undefined && sd.max !== undefined) {
+          tooltipText += "\nRange: " + sd.min + " to " + sd.max;
+          delete sd.min;
+          delete sd.max;
+        } else if (sd.min !== undefined) {
+          tooltipText += "\nMin: " + sd.min;
+          delete sd.min;
+        } else if (sd.max !== undefined) {
+          tooltipText += "\nMax: " + sd.max;
+          delete sd.max;
+        }
+        if (sd.presets) {
+          tooltipText += "\nPresets:\n";
+          for (const preset of sd.presets) {
+            tooltipText += " - " + preset + "\n";
+          }
+          delete sd.presets;
+        }
+
+        delete sd.current;
+        if (sd.values) {
+          tooltipText += "\nValue(s):\n";
+          for (const value of sd.values) {
+            tooltipText += " - " + value + "\n";
+          }
+          delete sd.values;
+        }
+
+        $this.attr("title", tooltipText);
+        $this.removeClass("needsData");
+      });
+      settingRow.append(keyCol);
+      settingRow.append(valueCol);
+      settingsHeader.after(settingRow);
+    }
+  }
+
+  async function populateSettings() {
+    let [status, groups] = await make_get_request("/v1/configs");
+    if (status !== 200) {
+      window.setTimeout(populateSettings, 1000);
+      return;
+    }
+    let settingsTable = $("<table></table>");
+    for (let group of groups.categories) {
+      let groupHeader = $("<tr></tr>").attr("data-group", group);
+      let groupCol = $("<td colSpan='2'></td>");
+      groupCol.text(group).addClass("header");
+      groupHeader.append(groupCol);
+      settingsTable.append(groupHeader);
+    }
+    $("#settings").empty().append(settingsTable);
+    for (let group of groups.categories) {
+      await populateGroupSettings(group);
+    }
+  }
 
   async function submitSidPlayer() {
     let body = $("#file")[0].files[0];
@@ -969,8 +1081,6 @@ async function make_binary_get_request(url, params) {
     .join("&");
   const fullUrl = `${url}?${queryString}`;
 
-  console.log("Requesting URL:", fullUrl);
-
   try {
     const response = await $.ajax({
       url: fullUrl,
@@ -1007,7 +1117,7 @@ async function make_get_request(url, params) {
     .join("&");
   const fullUrl = `${url}?${queryString}`;
 
-  console.log("Requesting URL:", fullUrl);
+  //console.log("Requesting URL:", fullUrl);
 
   try {
     const response = await $.ajax({

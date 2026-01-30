@@ -43,51 +43,35 @@ a:visited {
   width: 800px;
   display: none;
 }
-#livemon {
+.page {
   flex-grow: 1;
   padding: 20px;
   display: none;
 }
-#sidplay {
-  flex-grow: 1;
-  padding: 20px;
-  display: none;
-}
-#runner {
-  flex-grow: 1;
-  padding: 20px;
-  display: none;
-}
-#tokenizer {
-  flex-grow: 1;
-  padding: 20px;
-  display: none;
-}
-#sidmsg {
-  flex-grow: 1;
-  padding: 20px;
-  display: none;
-  background-color: red;
-  color: white;
-  width: 400px;
-}
-#runmsg {
-  flex-grow: 1;
-  padding: 20px;
-  display: none;
-  background-color: red;
-  color: white;
-  width: 400px;
-}
+#sidmsg,
+#runmsg,
 #basicmsg {
-  flex-grow: 1;
-  padding: 20px;
   display: none;
   background-color: red;
   color: white;
   width: 400px;
 }
-
+#infoTableContainer > table td:first-of-type {
+  font-weight: bold;
+  text-align: right;
+  padding-right: 10px;
+}
+#settings .header {
+  font-weight: bold;
+  height: 2em;
+  vertical-align: bottom;
+}
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+tr .header {
+  background-color: #ddd;
+}
 @font-face {
   font-family: "C64";
   src: url("C64_Pro-STYLE.woff") format("woff"); /* Path to your C64 font file */
@@ -188,6 +172,12 @@ li {
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
 }
+.tooltip {
+  cursor: help;
+}
+.tooltip.needsData {
+  cursor: progress;
+}
 
 @media (prefers-color-scheme: dark) {
   body {
@@ -217,5 +207,11 @@ li {
   }
   .insertSymbol {
     width: 100%;
+  }
+  tr:nth-child(even) {
+    background-color: #333;
+  }
+  td.header {
+    background-color: #444;
   }
 }

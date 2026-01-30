@@ -25,7 +25,7 @@ deploy-dev: build
 	find dist  -type f  -exec u64 -U "{}" /Flash/html/ \;
 
 pretty:
-	prettier --write "src/**/*.html"
+	prettier --write "src/**/*"
 
 
 dist: clean

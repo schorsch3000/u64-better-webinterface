@@ -10,3 +10,7 @@ if [[ "$newSize" -gt $((oldSize )) ]]; then
   echo "the claim that the new build is smaller than the original has been violated."
   exit 1
 fi
+
+echo "New build size ($newSize bytes) is within the original size ($oldSize bytes)."
+percentage="$(( newSize * 100 / oldSize ))"
+echo "New build size is ${percentage}% of the original size."
