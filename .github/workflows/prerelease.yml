@@ -17,7 +17,9 @@ jobs:
         run: sudo apt-get install minify zip
 
       - name: Build
-        run: make release
+        run: |
+          export VERSION="prerelease-v${{ github.run_number }}"
+          make release
 
       - name: Create Release
         uses: ncipollo/release-action@v1
@@ -29,3 +31,4 @@ jobs:
           prerelease: true
           allowUpdates: true
           artifacts: "u64-better-webinterface.zip"
+          generateReleaseNotes: true

@@ -1,4 +1,4 @@
-.PHONY: build deploy-dev clean pretty pre-commit release local-build
+.PHONY: build deploy-dev clean pretty pre-commit release local-build version
 
 
 local-build: pretty build
@@ -8,8 +8,11 @@ build: dist dist/C64_Pro-STYLE.woff
 	minify -r  src/ -o dist
 	./checkSizeClaim.sh
 
-release: build
+release: build version
 	cd dist && zip -r ../u64-better-webinterface.zip .
+
+version: build
+	sed -i  "s/{{VERSION}}/$${VERSION:-localbuild}/g" dist/index.html
 
 dist/C64_Pro-STYLE.woff: assets/C64_Pro-STYLE.woff
 	cp assets/C64_Pro-STYLE.woff dist/
@@ -21,7 +24,7 @@ assets/C64_Pro-STYLE.woff: assets
 assets:
 	mkdir -p assets
 
-deploy-dev: build
+deploy-dev: build version
 	find dist  -type f  -exec u64 -U "{}" /Flash/html/ \;
 
 pretty:
@@ -33,5 +36,5 @@ dist: clean
 clean:
 	@rm -rf dist
 
-autodeploy-dev: build
+autodeploy-dev: deploy-dev
 	find -not -path "./dist/*" -not -path "./assets/*" | entr -c make deploy-dev
