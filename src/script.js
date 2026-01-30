@@ -395,7 +395,7 @@ $(document).ready(async function () {
     let parts = filename.split(".");
     let extension = parts.length > 1 ? parts[parts.length - 1] : "";
     extension = extension.toUpperCase();
-    console.log(extension);
+
     let params = {};
 
     if (extension === "PRG") {
